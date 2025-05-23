@@ -1,9 +1,11 @@
 package com.lucas.crudcarros.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
+@Entity
 public class Carro {
 	
 	@Id
@@ -13,10 +15,10 @@ public class Carro {
 	@Column(unique = true, nullable = false)
 	private String placa;
 	
-	@Column(unique = true, nullable = false)
+	@Column(nullable = false)
 	private String modelo;
 	
-	@Column(unique = true, nullable = false)
+	@Column(nullable = false)
 	private String marca;
 	
 	private Integer ano;
