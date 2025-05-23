@@ -6,4 +6,5 @@ import com.lucas.crudcarros.model.Carro;
 
 public interface CarroRepository extends JpaRepository <Carro, Integer> {
 
+	public Boolean existsByPlaca(String placa);
 }
