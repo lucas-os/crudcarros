@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lucas.crudcarros.model.Carro;
@@ -46,5 +47,20 @@ public class CarroController {
 		carro.setId(id);
 		carroService.removerCarro(carro);
 		return ResponseEntity.status(204).build(); //204 No Content indica que a remoção foi feita com sucesso e não há nada para retornar no corpo
+	}
+	
+	@GetMapping("/marca")
+	public ResponseEntity<List<Carro>> listarCarrosMarca(@RequestParam String nome)
+	{
+		Carro carro = new Carro();
+		carro.setMarca(nome);
+		List<Carro> listaDeCarrosMarca = carroService.listarCarroPorMarca(carro);
+		
+		if(listaDeCarrosMarca.isEmpty())
+		{
+			throw new IllegalArgumentException("Nenhum carro encontrado com essa marca");
+		}
+		
+		return ResponseEntity.ok(listaDeCarrosMarca);
 	}
 }

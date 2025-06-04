@@ -14,6 +14,7 @@ public class CarroService {
 	@Autowired
 	CarroRepository carroR;
 	
+	
 	public void salvarCarro(Carro carro) {
 		
 		if(carro.getModelo() == null || carro.getModelo().isEmpty()) 
@@ -61,6 +62,12 @@ public class CarroService {
 		}
 		else
 			carroR.deleteById(carro.getId());
+	}
+	
+	public List<Carro> listarCarroPorMarca(Carro carro)
+	{
+		List<Carro> listaCarrosMarca = carroR.findByMarca(carro.getMarca());
+		return listaCarrosMarca;
 	}
 }
 
