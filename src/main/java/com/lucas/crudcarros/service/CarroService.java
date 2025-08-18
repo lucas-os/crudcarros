@@ -6,41 +6,39 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.lucas.crudcarros.model.Carro;
+import com.lucas.crudcarros.model.Proprietario;
 import com.lucas.crudcarros.repository.CarroRepository;
+import com.lucas.crudcarros.repository.ProprietarioRepository;
 
 @Service
 public class CarroService {
 
 	@Autowired
 	CarroRepository carroR;
-	
+	ProprietarioRepository proprietarioR;
 	
 	public void salvarCarro(Carro carro) {
 		
-		if(carro.getModelo() == null || carro.getModelo().isEmpty()) 
-		{
-			throw new IllegalArgumentException("Voce nao colocou o modelo");
-		}
-		if(carro.getMarca() == null || carro.getMarca().isEmpty()) 
-		{
-			throw new IllegalArgumentException("Voce nao colocou a marca");
-		}
-		if(carro.getPlaca() == null || carro.getPlaca().isEmpty()) 
-		{
-			throw new IllegalArgumentException("Voce nao colocou a placa");
-		}
+		validarCarro(carro);
+
+	    String cpfP = carro.getProprietario().getCpf().trim();
+	    validarCpfProprietario(cpfP);
+
+	    Proprietario propr = proprietarioR.findByCpf(cpfP);
+	    
+	    if (propr == null) 
+	    {
+	        throw new IllegalArgumentException("Não tem nenhum proprietário com esse CPF");
+	    }
 		
-		if(carro.getId() == null)
+		carro.setProprietario(propr);
+		
+		if (carro.getId() == null && carroR.existsByPlaca(carro.getPlaca())) 
 		{
-			if(carroR.existsByPlaca(carro.getPlaca()))
-			{
-				throw new IllegalArgumentException("Ja tem um carro com essa placa");
-			}
-			else
-				carroR.save(carro);
-		}
-		else
-			carroR.save(carro);
+	        throw new IllegalArgumentException("Já tem um carro com essa placa");
+	    }
+
+	    carroR.save(carro);
 	}
 	
 	public List<Carro> listarCarros(){
@@ -68,6 +66,30 @@ public class CarroService {
 	{
 		List<Carro> listaCarrosMarca = carroR.findByMarca(carro.getMarca());
 		return listaCarrosMarca;
+	}
+	
+	private void validarCarro(Carro carro) 
+	{
+	    if (carro.getModelo() == null || carro.getModelo().trim().isEmpty()) 
+	    {
+	        throw new IllegalArgumentException("Você não colocou o modelo");
+	    }
+	    if (carro.getMarca() == null || carro.getMarca().trim().isEmpty()) 
+	    {
+	        throw new IllegalArgumentException("Você não colocou a marca");
+	    }
+	    if (carro.getPlaca() == null || carro.getPlaca().trim().isEmpty()) 
+	    {
+	        throw new IllegalArgumentException("Você não colocou a placa");
+	    }
+	}
+	
+	private void validarCpfProprietario(String cpf) 
+	{
+	    if (cpf == null || cpf.isEmpty()) 
+	    {
+	        throw new IllegalArgumentException("CPF não encontrado");
+	    }
 	}
 }
 
