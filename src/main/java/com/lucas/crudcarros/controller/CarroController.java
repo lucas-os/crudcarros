@@ -1,5 +1,6 @@
 package com.lucas.crudcarros.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lucas.crudcarros.dto.CarroDTO;
 import com.lucas.crudcarros.model.Carro;
+import com.lucas.crudcarros.repository.CarroRepository;
+import com.lucas.crudcarros.repository.ProprietarioRepository;
 import com.lucas.crudcarros.service.CarroService;
 
 @RestController //Essa classe vai devolver dados direto pro cliente, sem ela, o Spring ia esperar que você retornasse uma página HTML, tipo um JSP ou Thymeleaf
@@ -25,19 +29,36 @@ public class CarroController {
 	@Autowired
 	CarroService carroService;
 	
+	@Autowired
+	CarroRepository carroR;
 	
+	@Autowired
+	ProprietarioRepository proprR;
+
 	@PostMapping
-	public ResponseEntity<Carro> cadastrarCarro(@RequestBody Carro carro)
+	public ResponseEntity<CarroDTO> cadastrarCarro(@RequestBody CarroDTO carroDTO)
 	{
-		carroService.salvarCarro(carro);
-		return ResponseEntity.status(201).body(carro);
+		/*Carro carro = carroService.paraCarro(carroDTO);
+		carro.setProprietario(proprR.findByCpf(carroDTO.getCpfProprietario()));
+		Carro carroSalvo = carroR.save(carro);
+		return ResponseEntity.ok(carroService.paraCarroDTO(carroSalvo));*/
+		CarroDTO carroSalvo = carroService.salvarCarro(carroDTO);
+		return ResponseEntity.ok(carroSalvo);
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<Carro>> listarTodosCarros(Carro carro)
+	public ResponseEntity<List<CarroDTO>> listarTodosCarros()
 	{
-		List<Carro> listaDeCarros = carroService.listarCarros();
-		return ResponseEntity.ok(listaDeCarros);
+		List<Carro> listaCarros = carroR.findAll();
+		List<CarroDTO> listaCarrosDTO = new ArrayList<>();
+		
+		for(Carro c : listaCarros)
+		{
+			CarroDTO dto = carroService.paraCarroDTO(c);
+			listaCarrosDTO.add(dto);
+		}
+		
+		return ResponseEntity.ok(listaCarrosDTO);
 	}
 	
 	@DeleteMapping("/{id}")
@@ -50,7 +71,7 @@ public class CarroController {
 	}
 	
 	@GetMapping("/marca")
-	public ResponseEntity<List<Carro>> listarCarrosMarca(@RequestParam String nome)
+	public ResponseEntity<List<CarroDTO>> listarCarrosMarca(@RequestParam String nome)
 	{
 		Carro carro = new Carro();
 		carro.setMarca(nome);
@@ -61,6 +82,14 @@ public class CarroController {
 			throw new IllegalArgumentException("Nenhum carro encontrado com essa marca");
 		}
 		
-		return ResponseEntity.ok(listaDeCarrosMarca);
+		List<CarroDTO> listaDTO = new ArrayList<>();
+		
+		for(Carro c : listaDeCarrosMarca)
+		{
+			CarroDTO dto = carroService.paraCarroDTO(c);
+			listaDTO.add(dto);
+		}
+		
+		return ResponseEntity.ok(listaDTO);
 	}
 }

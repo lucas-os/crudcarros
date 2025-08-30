@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.lucas.crudcarros.dto.CarroDTO;
 import com.lucas.crudcarros.model.Carro;
 import com.lucas.crudcarros.model.Proprietario;
 import com.lucas.crudcarros.repository.CarroRepository;
@@ -15,13 +16,15 @@ public class CarroService {
 
 	@Autowired
 	CarroRepository carroR;
+	
+	@Autowired
 	ProprietarioRepository proprietarioR;
 	
-	public void salvarCarro(Carro carro) {
+	public CarroDTO salvarCarro(CarroDTO carroDTO) {
 		
-		validarCarro(carro);
+		validarCarro(carroDTO);
 
-	    String cpfP = carro.getProprietario().getCpf().trim();
+		String cpfP = carroDTO.getCpfProprietario().trim(); // carro.getProprietario().getCpf().trim(); - sem o DTO
 	    validarCpfProprietario(cpfP);
 
 	    Proprietario propr = proprietarioR.findByCpf(cpfP);
@@ -31,14 +34,18 @@ public class CarroService {
 	        throw new IllegalArgumentException("Não tem nenhum proprietário com esse CPF");
 	    }
 		
-		carro.setProprietario(propr);
+	    Carro carro = paraCarro(carroDTO);
+	    carro.setProprietario(propr);
 		
 		if (carro.getId() == null && carroR.existsByPlaca(carro.getPlaca())) 
 		{
 	        throw new IllegalArgumentException("Já tem um carro com essa placa");
 	    }
 
-	    carroR.save(carro);
+	    Carro carroSalvo = carroR.save(carro);
+	    CarroDTO carroResposta = paraCarroDTO(carroSalvo);
+	    
+	    return carroResposta;
 	}
 	
 	public List<Carro> listarCarros(){
@@ -68,17 +75,17 @@ public class CarroService {
 		return listaCarrosMarca;
 	}
 	
-	private void validarCarro(Carro carro) 
+	private void validarCarro(CarroDTO carroDTO) 
 	{
-	    if (carro.getModelo() == null || carro.getModelo().trim().isEmpty()) 
+	    if (carroDTO.getModelo() == null || carroDTO.getModelo().trim().isEmpty()) 
 	    {
 	        throw new IllegalArgumentException("Você não colocou o modelo");
 	    }
-	    if (carro.getMarca() == null || carro.getMarca().trim().isEmpty()) 
+	    if (carroDTO.getMarca() == null || carroDTO.getMarca().trim().isEmpty()) 
 	    {
 	        throw new IllegalArgumentException("Você não colocou a marca");
 	    }
-	    if (carro.getPlaca() == null || carro.getPlaca().trim().isEmpty()) 
+	    if (carroDTO.getPlaca() == null || carroDTO.getPlaca().trim().isEmpty()) 
 	    {
 	        throw new IllegalArgumentException("Você não colocou a placa");
 	    }
@@ -90,6 +97,31 @@ public class CarroService {
 	    {
 	        throw new IllegalArgumentException("CPF não encontrado");
 	    }
+	}
+	
+	public Carro paraCarro(CarroDTO carroDTO)
+	{
+		Carro carro = new Carro();
+		carro.setPlaca(carroDTO.getPlaca());
+		carro.setAno(carroDTO.getAno());
+	    carro.setCor(carroDTO.getCor());
+	    carro.setMarca(carroDTO.getMarca());
+	    carro.setModelo(carroDTO.getModelo());
+	    carro.setSituacao(carroDTO.getSituacao());
+	    return carro;
+	}
+	
+	public CarroDTO paraCarroDTO(Carro carroSalvo)
+	{
+		CarroDTO carroResposta = new CarroDTO();
+		carroResposta.setPlaca(carroSalvo.getPlaca());
+	    carroResposta.setAno(carroSalvo.getAno());
+	    carroResposta.setCor(carroSalvo.getCor());
+	    carroResposta.setMarca(carroSalvo.getMarca());
+	    carroResposta.setModelo(carroSalvo.getModelo());
+	    carroResposta.setSituacao(carroSalvo.getSituacao());
+	    carroResposta.setCpfProprietario(carroSalvo.getProprietario().getCpf());
+	    return carroResposta;
 	}
 }
 
