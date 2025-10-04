@@ -2,6 +2,7 @@ package com.lucas.crudcarros.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +22,8 @@ import com.lucas.crudcarros.model.Carro;
 import com.lucas.crudcarros.repository.CarroRepository;
 import com.lucas.crudcarros.repository.ProprietarioRepository;
 import com.lucas.crudcarros.service.CarroService;
+
+import jakarta.validation.Valid;
 
 @RestController //Essa classe vai devolver dados direto pro cliente, sem ela, o Spring ia esperar que você retornasse uma página HTML, tipo um JSP ou Thymeleaf
 @CrossOrigin("*") //Permite requisições de outros domínios/origens.
@@ -36,7 +40,7 @@ public class CarroController {
 	ProprietarioRepository proprR;
 
 	@PostMapping
-	public ResponseEntity<CarroDTO> cadastrarCarro(@RequestBody CarroDTO carroDTO)
+	public ResponseEntity<CarroDTO> cadastrarCarro(@Valid @RequestBody CarroDTO carroDTO)
 	{
 		/*Carro carro = carroService.paraCarro(carroDTO);
 		carro.setProprietario(proprR.findByCpf(carroDTO.getCpfProprietario()));
@@ -70,6 +74,13 @@ public class CarroController {
 		return ResponseEntity.status(204).build(); //204 No Content indica que a remoção foi feita com sucesso e não há nada para retornar no corpo
 	}
 	
+	@PutMapping("/{id}")
+	public ResponseEntity<CarroDTO> alterarCarro(@PathVariable Integer id, @Valid @RequestBody CarroDTO dto)
+	{
+		CarroDTO carroAlterado = carroService.editarCarro(id, dto);
+		return ResponseEntity.ok(carroAlterado);
+	}
+	
 	@GetMapping("/marca")
 	public ResponseEntity<List<CarroDTO>> listarCarrosMarca(@RequestParam String nome)
 	{
@@ -91,5 +102,57 @@ public class CarroController {
 		}
 		
 		return ResponseEntity.ok(listaDTO);
+	}
+	/*
+	@GetMapping("/filtros")
+	public ResponseEntity<List<CarroDTO>> filtrarCarros(
+	        @RequestParam(required = false) String marca,
+	        @RequestParam(required = false) String modelo,
+	        @RequestParam(required = false) String placa,
+	        @RequestParam(required = false) String cpfProprietario)
+	{
+		List<Carro> carros = carroService.filtrarCarros(marca, modelo, placa, cpfProprietario);
+		List<CarroDTO> listaDTO = new ArrayList<>();
+		
+		for(Carro c : carros)
+		{
+			CarroDTO dto = carroService.paraCarroDTO(c);
+			listaDTO.add(dto);
+		}
+		
+		return ResponseEntity.ok(listaDTO);
+	}*/
+	
+	@GetMapping("/filtros")
+	public ResponseEntity<List<CarroDTO>> listarCarrosComFiltros(
+			@RequestParam(required = false) String placa,
+			@RequestParam(required = false) String cpfProprietario,
+	        @RequestParam(required = false) String modelo,
+	        @RequestParam(required = false) String marca,
+	        @RequestParam(required = false) Integer ano,
+	        @RequestParam(required = false) String cor)
+	{	
+
+		List<Carro> carros = carroService.listarCarrosComFiltros(placa, cpfProprietario, modelo, marca, ano, cor);
+		List<CarroDTO> listaDTO = new ArrayList<>();
+		
+		for(Carro c : carros)
+		{
+			CarroDTO dto = carroService.paraCarroDTO(c);
+			listaDTO.add(dto);
+		}
+		
+		return ResponseEntity.ok(listaDTO);
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<CarroDTO> buscarCarroPorId(@PathVariable Integer id) {
+	    Optional<Carro> carro = carroService.buscarPorId(id);
+	    if(carro.isPresent()) {
+	        CarroDTO dto = carroService.paraCarroDTO(carro.get());
+	        return ResponseEntity.ok(dto);
+	    } else {
+	        return ResponseEntity.notFound().build();
+	    }
 	}
 }
