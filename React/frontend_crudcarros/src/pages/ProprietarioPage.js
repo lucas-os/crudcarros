@@ -12,7 +12,7 @@ function ProprietarioPage() {
     endereco: ""
   });
   const [erros, setErros] = useState({});
-  const API_URL = "http://localhost:8080/proprietarios";
+  const API_URL = "https://crudcarros.up.railway.app/proprietarios";
   const navigate = useNavigate();
 
   const handleChange = (e) =>

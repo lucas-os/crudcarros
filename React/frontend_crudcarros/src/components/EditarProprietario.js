@@ -15,7 +15,7 @@ function EditarProprietario() {
     endereco: ""
   });
   const [erros, setErros] = useState({});
-  const API_URL = "http://localhost:8080/proprietarios";
+  const API_URL = "https://crudcarros.up.railway.app/proprietarios";
 
   useEffect(() => {
     const fetchProprietario = async () => {

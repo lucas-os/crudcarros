@@ -13,7 +13,7 @@ function CarroPage() {
     cpfProprietario: ""
   });
   const [erros, setErros] = useState({});
-  const API_URL = "http://localhost:8080/carros";
+  const API_URL = "https://crudcarros.up.railway.app/carros";
   const navigate = useNavigate();
 
   // Atualiza os inputs

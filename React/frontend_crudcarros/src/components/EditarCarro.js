@@ -16,7 +16,7 @@ function EditarCarro() {
     situacao: ""
   });
   const [erros, setErros] = useState({});
-  const API_URL = "http://localhost:8080/carros";
+  const API_URL = "https://crudcarros.up.railway.app/carros";
 
   useEffect(() => {
     const fetchCarro = async () => {

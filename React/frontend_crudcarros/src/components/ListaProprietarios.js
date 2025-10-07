@@ -7,7 +7,7 @@ import { IMask, IMaskInput } from "react-imask";
 function ListaProprietarios() {
   const [proprietarios, setProprietarios] = useState([]);
   const [filtroCpf, setFiltroCpf] = useState(""); // filtro da barra de pesquisa
-  const API_URL = "http://localhost:8080/proprietarios";
+  const API_URL = "https://crudcarros.up.railway.app/proprietarios";
   const navigate = useNavigate();
   const [erro, setErro] = useState("");
 

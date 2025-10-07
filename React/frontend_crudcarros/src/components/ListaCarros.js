@@ -15,7 +15,7 @@ function ListaCarros() {
   });
   const [erro, setErro] = useState(""); // mensagem de erro
   const navigate = useNavigate();
-  const API_URL = "http://localhost:8080/carros";
+  const API_URL = "https://crudcarros.up.railway.app/carros";
 
   // Carrega todos os carros ao iniciar
   useEffect(() => {
