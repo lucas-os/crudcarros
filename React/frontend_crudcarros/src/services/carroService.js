@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://crudcarros.up.railway.app/carros"; // sua API do Spring Boot
+const API_URL = "https://crudcarros.up.railway.app/carros"; // sua API do Spring Boot http://localhost:8080/proprietarios
 
 export const listarCarros = () => {
   return axios.get(API_URL);

@@ -59,9 +59,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        Map<String, String> erro = new HashMap<>();
+        erro.put("erro", ex.getMessage()); // agora bate com o frontend
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
     }
 
 
@@ -88,5 +88,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         erro.put("erro", "Ocorreu um erro inesperado. Tente novamente.");
         return new ResponseEntity<>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<Map<String, String>> handleCampoInvalido(ValidationException ex) {
+        Map<String, String> erro = new HashMap<>();
+        erro.put(ex.getCampo(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
+    }
+
     
 }

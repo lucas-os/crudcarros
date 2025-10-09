@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.lucas.crudcarros.dto.CarroDTO;
+import com.lucas.crudcarros.exception.ValidationException;
 import com.lucas.crudcarros.model.Carro;
 import com.lucas.crudcarros.model.Proprietario;
 import com.lucas.crudcarros.repository.CarroRepository;
@@ -40,7 +41,7 @@ public class CarroService {
 		
 		if (carro.getId() == null && carroR.existsByPlaca(carro.getPlaca())) 
 		{
-	        throw new IllegalArgumentException("Já tem um carro com essa placa");
+	        throw new ValidationException("placa", "Já existe um carro cadastrado com essa placa");
 	    }
 
 	    Carro carroSalvo = carroR.save(carro);

@@ -34,8 +34,8 @@ function CarroPage() {
 
       if (!response.ok) {
         const data = await response.json();
-        if (data.erro) {
-          alert(data.erro);
+        if (data.erro || data.error) {
+          alert(data.erro || data.error);
         } else {
           setErros(data);
         }

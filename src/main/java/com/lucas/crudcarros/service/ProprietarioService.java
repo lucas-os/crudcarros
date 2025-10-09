@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.lucas.crudcarros.dto.ProprietarioDTO;
 import com.lucas.crudcarros.dto.ResumoCarroDTO;
+import com.lucas.crudcarros.exception.ValidationException;
 import com.lucas.crudcarros.model.Carro;
 import com.lucas.crudcarros.model.Proprietario;
 import com.lucas.crudcarros.repository.CarroRepository;
@@ -31,7 +32,7 @@ public class ProprietarioService {
 		
 		if(proprDTO.getId() == null && proprietarioR.existsByCpf(proprDTO.getCpf()))
 		{
-			throw new IllegalArgumentException("Já existe uma pessoa cadastrada com esse CPF");	
+			throw new ValidationException("cpf", "Já existe uma pessoa cadastrada com esse CPF");	
 		}
 		
 		Proprietario proprSalvo = proprietarioR.save(propr);
