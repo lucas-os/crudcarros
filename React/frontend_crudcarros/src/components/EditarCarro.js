@@ -42,8 +42,13 @@ function EditarCarro() {
       navigate(`/carros/detalhes/${id}`);
     } catch (error) {
       if (error.response && error.response.data) {
-        console.log("Retorno do backend:", error.response.data);
-        setErros(error.response.data);
+        const data = error.response.data;
+
+        if (data.erro || data.error) {
+          alert(data.erro || data.error);
+        } else {
+          setErros(data); // erros de campo
+        }
       }
       console.error("Erro ao atualizar carro:", error);
     }

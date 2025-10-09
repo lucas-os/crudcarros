@@ -41,7 +41,13 @@ function EditarProprietario() {
       navigate(`/proprietarios/detalhes/${id}`);
     } catch (error) {
       if (error.response && error.response.data) {
-        setErros(error.response.data); // pega erros do backend
+        const data = error.response.data;
+
+        if (data.erro || data.error) {
+          alert(data.erro || data.error);
+        } else {
+          setErros(data); // erros de campo
+        }
       }
       console.error("Erro ao atualizar proprietário:", error);
     }
